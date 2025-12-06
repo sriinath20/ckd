@@ -71,12 +71,12 @@ Simulation: AI predicts future risk trajectory based on habits.
 📂 Repository Structure
 
 📦 digital-kidney-twin
- ┣ 📜 app_integrated.py        # 📱 Main Dashboard Application
- ┣ 📜 train_model_a.py         # 🧠 Training Script: Detection Engine
- ┣ 📜 train_model_b.py         # 🧠 Training Script: Digital Twin Engine
- ┣ 📊 kidney_disease.csv       # 💾 Dataset: Clinical Biomarkers
+ ┣ 📜 app_integrated.py           # 📱 Main Dashboard Application
+ ┣ 📜 train_model_a.py            # 🧠 Training Script: Detection Engine
+ ┣ 📜 train_model_b.py            # 🧠 Training Script: Digital Twin Engine
+ ┣ 📊 kidney_disease.csv          # 💾 Dataset: Clinical Biomarkers
  ┣ 📊 ckd_dataset_with_stages.csv # 💾 Dataset: Lifestyle Factors
- ┗ 📜 README.md                # 📄 Project Documentation
+ ┗ 📜 README.md                   # 📄 Project Documentation
 
 
 🛠️ Installation & Setup
@@ -129,4 +129,6 @@ Run: Click Run Simulation and watch the Digital Twin update its prediction in re
 
 Prototype Only: This software is for educational and research purposes. The eGFR calculations and ML predictions should not replace professional medical advice. Always consult a nephrologist.
 
+📜 License
 
+Distributed under the MIT License. See LICENSE for more information.
