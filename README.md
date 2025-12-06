@@ -1,116 +1,114 @@
-# 🩺 Digital Kidney Twin (Single-Model Edition)
+```markdown
+# 🩺 Digital Kidney Twin (Clinical Edition)
 
-**A Hybrid Intelligence System for CKD Management.**
+> **A Hybrid Intelligence System for CKD Risk Profiling**
 
-This project combines medical mathematics (CKD-EPI 2021) with a robust AI Lifestyle Engine to create a "Digital Twin" of your kidney health.
+This project separates **diagnosis** from **prognosis**:  
+- ✅ **Diagnosis**: Uses medical mathematics (CKD-EPI 2021) to determine your **current CKD stage** (1–5) based on serum creatinine.  
+- 🔮 **Prognosis**: Uses clinical AI to predict your **future risk profile** based on systemic health markers (**BP, Diabetes, Anemia**, etc.).
+
+> **Key Innovation**: The AI **does NOT use creatinine**. It assesses kidney stress through the lens of whole-body physiology.
+
+---
 
 ## 🚀 Project Overview
 
-This dashboard operates on a simple, powerful logic:
+Solves the **"Circular Logic"** problem in chronic kidney disease (CKD) management by decoupling:
+- **Functional Engine (Math)**: Calculates exact eGFR and CKD stage.
+- **Risk Engine (AI)**: Predicts "High Severity" risk using systemic biomarkers (Blood Pressure, Glucose, Hemoglobin, Albumin, etc.).
 
-- The **"Functional" Twin (Math)**: accurately calculates your current kidney function using standard medical formulas.
-- The **"Lifestyle" Twin (AI)**: predicts what your kidney health should be based on your diet, stress, and habits.
-- If the Lifestyle Twin predicts a worse stage than the Functional Twin, it serves as an early warning system for hidden damage.
+This separation enables clinicians to see **both current status and future trajectory**—even before creatinine worsens.
+
+---
 
 ## 📂 File Structure
 
-| File Name                      | Description                                               |
-|--------------------------------|-----------------------------------------------------------|
-| `Improved Dashboard Script.py` | 📱 The Dashboard: The main application interface.         |
-| `Improved Training script.py`  | 🧠 The Brain: Trains the AI model on lifestyle data.      |
-| `ckd_dataset_with_stages.csv`  | 💾 The Data: Dataset containing lifestyle vs. stage correlations. |
-| `digital_twin_model.pkl`       | 🤖 The Model: (Created after running the training script). |
+| File Name                         | Description |
+|----------------------------------|-------------|
+| `Improved Dashboard Script.py`   | 🖥️ **The Application**: Interactive 3-tab Streamlit dashboard |
+| `Improved Training script.py`    | 🧠 **The Training Logic**: Preprocesses data & trains the risk model |
+| `kidney_disease.csv`             | 💾 **The Dataset**: Clinical records (BP, Hemo, Albumin, Glucose, etc.) |
+| `kidney_risk_model.pkl`          | 🤖 **The Artifact**: Trained AI model (auto-generated after training) |
 
-> ⚠️ **Important Note**: Python files usually should not have spaces in their names. It is highly recommended to rename your files to `train_model.py` and `app.py` to avoid errors in the terminal.
+> ⚠️ **All files must reside in the same directory.**
+
+---
 
 ## 🛠️ Installation & Setup
 
-### 1. Requirements
-
-Ensure you have Python installed (preferably 3.8+). Install the required packages:
-
+### 1. Install Dependencies
 ```bash
-pip install streamlit pandas numpy xgboost scikit-learn Pillow
+pip install streamlit pandas numpy scikit-learn Pillow
 ```
-### 2. Initialize the AI (Training)
-
-You must train the model once so the dashboard has a "brain" to use. Run the training script:
-
+### 2. Train the AI Model (One-Time Setup)
+Run the training script to generate `kidney_risk_model.pkl`:
 ```bash
-# If using the original filename with spaces:
 python "Improved Training script.py"
 ```
-
-✅ **Success Message**: `Success! Saved 'digital_twin_model.pkl'`
-
-💡 **Tip**: Rename the script to `train_model.py` for cleaner commands:  
-```bash
-python train_model.py
-```
+✅ Wait for confirmation:  
+> `"Model and artifacts saved to kidney_risk_model.pkl"`
 
 ### 3. Launch the Dashboard
-
-Start the Streamlit app to interact with your Digital Kidney Twin:
-
 ```bash
-# If using the original filename:
 streamlit run "Improved Dashboard Script.py"
 ```
+The app will open in your browser at `http://localhost:8501`.
 
-💡 **Tip**: After renaming, use:  
-```bash
-streamlit run app.py
-```
-
-Your browser will open automatically at `http://localhost:8501`.
+---
 
 ## 🧠 How It Works
 
-### Step 1: Functional Analysis (The Math)
-- **Inputs**: Age, Sex, Serum Creatinine  
-- **Engine**: CKD-EPI 2021 equation (gold standard for eGFR estimation)  
-- **Output**: Exact eGFR value and Current CKD Stage (1–5)  
-- **Purpose**: Provides a clinically validated baseline of kidney function.
+### **Tab 1: Patient Data Entry**
+- **Mandatory**: Age, Sex, Serum Creatinine (for eGFR).
+- **Clinical Inputs**:  
+  - Systolic & Diastolic Blood Pressure  
+  - Random Glucose  
+  - Hemoglobin  
+  - Albumin  
+  - Hypertension Status (Yes/No)  
+  - Diabetes Status (Yes/No)
 
-### Step 2: Lifestyle Analysis (The AI)
-- **Inputs**: Blood Pressure, Diet Quality, Water Intake, Stress Level, BUN, Calcium  
-- **Engine**: XGBoost Classifier trained on real-world CKD lifestyle data  
-- **Output**: Predicted "Risk Stage" based on modifiable habits  
-- **Purpose**: Flags if your lifestyle is pushing you toward worse kidney health than your current lab values suggest.
+> 💡 All inputs mirror standard hospital lab reports.
 
-### Step 3: Interactive Simulation
-- Adjust sliders for lifestyle factors (e.g., reduce sodium, increase water)  
-- Watch your AI-predicted "Risk Stage" update in real time  
-- **Goal**: Align your Lifestyle Twin with your Functional Twin—or make it better!
+---
+
+### **Tab 2: Diagnosis & Risk**
+- **Current Status**:  
+  - eGFR (mL/min/1.73m²)  
+  - CKD Stage (1–5) — *calculated via CKD-EPI 2021 formula*
+- **Risk Analysis**:  
+  - **Systemic Vulnerability Score** (0–100%)  
+    - **Low (<30%)**: Systemic factors well-controlled  
+    - **High (>70%)**: Biomarker pattern resembles advanced CKD  
+
+> 🔍 The AI sees risk **before** kidney function declines.
+
+---
+
+### **Tab 3: What-If Simulation**
+- Adjust sliders for BP, Glucose, Hemo, etc.
+- Watch **real-time risk updates** as you modify inputs.
+- **Key Insight**: Risk drops **immediately** with improved systemic control—even if creatinine hasn’t changed yet.
+
+> 🌟 Proves that managing **whole-body health** directly protects kidney outcomes.
+
+---
 
 ## ⚠️ Troubleshooting
 
-### ❌ "Model not found" error
-Make sure you ran the training script first. The file `digital_twin_model.pkl` must be in the same directory as the dashboard script.
+| Issue | Solution |
+|------|--------|
+| `Model file not found` | You skipped training! Run `python "Improved Training script.py"` first. |
+| `X does not have valid feature names` | Fixed in the **Improved** scripts—ensure you’re using the latest versions. |
 
-### 📉 Low model accuracy?
-The training pipeline:
-- Removes ambiguous "Stage 0" entries
-- Applies class balancing (SMOTE or class weights)
-- Focuses on distinguishing moderate-to-severe CKD (Stages 3–5)
+---
 
-For best results, ensure your dataset has diverse, high-quality lifestyle labels.
+## 📜 Disclaimer
 
-### 💥 Filename issues with spaces
-Avoid spaces in filenames. Rename:
-- `"Improved Training script.py"` → `train_model.py`
-- `"Improved Dashboard Script.py"` → `app.py`
+> ⚠️ **This tool is a research prototype for educational purposes only.**  
+> - Trained on the [UCI Chronic Kidney Disease Dataset](https://archive.ics.uci.edu/ml/datasets/Chronic_Kidney_Disease).  
+> - eGFR calculations follow CKD-EPI 2021 but **must be validated by a licensed clinician**.  
+> - **Not a substitute for professional medical advice, diagnosis, or treatment.**
 
-Then use:
-```bash
-python train_model.py
-streamlit run app.py
-```
-
-## 📜 Medical Disclaimer
-
-> **This software is a research prototype for educational and demonstration purposes only.**  
-> It is **not** a medical device and **does not** provide medical advice, diagnosis, or treatment.  
-> Always consult a licensed nephrologist or healthcare provider for kidney health concerns.  
-> Do not make clinical decisions based solely on this tool’s output.
+---
 ```
