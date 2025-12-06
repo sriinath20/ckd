@@ -1,4 +1,44 @@
+# 🩺 Digital Kidney Twin (Clinical Edition)
 
+> **A Hybrid Intelligence System for CKD Risk Profiling**
+
+This project separates **diagnosis** from **prognosis**:  
+- ✅ **Diagnosis**: Uses medical mathematics (CKD-EPI 2021) to determine your **current CKD stage** (1–5) based on serum creatinine.  
+- 🔮 **Prognosis**: Uses clinical AI to predict your **future risk profile** based on systemic health markers (**BP, Diabetes, Anemia**, etc.).
+
+> **Key Innovation**: The AI **does NOT use creatinine**. It assesses kidney stress through the lens of whole-body physiology.
+
+---
+
+## 🚀 Project Overview
+
+Solves the **"Circular Logic"** problem in chronic kidney disease (CKD) management by decoupling:
+- **Functional Engine (Math)**: Calculates exact eGFR and CKD stage.
+- **Risk Engine (AI)**: Predicts "High Severity" risk using systemic biomarkers (Blood Pressure, Glucose, Hemoglobin, Albumin, etc.).
+
+This separation enables clinicians to see **both current status and future trajectory**—even before creatinine worsens.
+
+---
+
+## 📂 File Structure
+
+| File Name                         | Description |
+|----------------------------------|-------------|
+| `Improved Dashboard Script.py`   | 🖥️ **The Application**: Interactive 3-tab Streamlit dashboard |
+| `Improved Training script.py`    | 🧠 **The Training Logic**: Preprocesses data & trains the risk model |
+| `kidney_disease.csv`             | 💾 **The Dataset**: Clinical records (BP, Hemo, Albumin, Glucose, etc.) |
+| `kidney_risk_model.pkl`          | 🤖 **The Artifact**: Trained AI model (auto-generated after training) |
+
+> ⚠️ **All files must reside in the same directory.**
+
+---
+
+## 🛠️ Installation & Setup
+
+### 1. Install Dependencies
+```bash
+pip install streamlit pandas numpy scikit-learn Pillow
+```
 ### 2. Train the AI Model (One-Time Setup)
 Run the training script to generate `kidney_risk_model.pkl`:
 ```bash
