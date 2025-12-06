@@ -88,8 +88,7 @@ The app will open in your browser at `http://localhost:8501`.
 
 | Issue | Solution |
 |------|--------|
-| `Model file not found` | You skipped training! Run `python "Improved Training script.py"` first. |
-| `X does not have valid feature names` | Fixed in the **Improved** scripts—ensure you’re using the latest versions. |
+| `Model file not found` | You skipped training! Run `python "train.py"` first. |
 
 ---
 
