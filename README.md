@@ -70,14 +70,29 @@ Simulation: AI predicts future risk trajectory based on habits.
 
 📂 Repository Structure
 
-📦 digital-kidney-twin
- ┣ 📜 app_integrated.py           # 📱 Main Dashboard Application
- ┣ 📜 train_model_a.py            # 🧠 Training Script: Detection Engine
- ┣ 📜 train_model_b.py            # 🧠 Training Script: Digital Twin Engine
- ┣ 📊 kidney_disease.csv          # 💾 Dataset: Clinical Biomarkers
- ┣ 📊 ckd_dataset_with_stages.csv # 💾 Dataset: Lifestyle Factors
- ┗ 📜 README.md                   # 📄 Project Documentation
+File
 
+Description
+
+app_integrated.py
+
+📱 Main Application: The interactive Streamlit dashboard.
+
+train_model_a.py
+
+🧠 Training Script A: Detection Engine (Binary Classification).
+
+train_model_b.py
+
+🧠 Training Script B: Digital Twin Engine (Risk Prediction).
+
+kidney_disease.csv
+
+💾 Dataset 1: Clinical biomarkers (UCI Dataset).
+
+ckd_dataset_with_stages.csv
+
+💾 Dataset 2: Lifestyle factors (Diet, Stress, etc.).
 
 🛠️ Installation & Setup
 
