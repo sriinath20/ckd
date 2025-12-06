@@ -1,4 +1,4 @@
-##🩺 Digital Kidney Twin (Clinical Edition)
+## 🩺 Digital Kidney Twin (Clinical Edition)
 
 > **A Hybrid Intelligence System for CKD Risk Profiling**
 
@@ -24,10 +24,11 @@ This separation enables clinicians to see **both current status and future traje
 
 | File Name                         | Description |
 |----------------------------------|-------------|
-| `Improved Dashboard Script.py`   | 🖥️ **The Application**: Interactive 3-tab Streamlit dashboard |
-| `Improved Training script.py`    | 🧠 **The Training Logic**: Preprocesses data & trains the risk model |
+| `app.py`   | 🖥️ **The Application**: Interactive 3-tab Streamlit dashboard |
+| `train.py`    | 🧠 **The Training Logic**: Preprocesses data & trains the risk model |
 | `kidney_disease.csv`             | 💾 **The Dataset**: Clinical records (BP, Hemo, Albumin, Glucose, etc.) |
 | `kidney_risk_model.pkl`          | 🤖 **The Artifact**: Trained AI model (auto-generated after training) |
+| `requirements.txt`          | 💾 **Requirements**: Reqired Packages need to be Installed |
 
 > ⚠️ **All files must reside in the same directory.**
 
@@ -37,9 +38,9 @@ This separation enables clinicians to see **both current status and future traje
 
 ### 1. Install Dependencies
 ```bash
-pip install streamlit pandas numpy scikit-learn Pillow
+pip install -r requirements.txt
 ```bash
-streamlit run "Improved Dashboard Script.py"
+streamlit run "app.py"
 ```
 The app will open in your browser at `http://localhost:8501`.
 
