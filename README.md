@@ -1,5 +1,13 @@
-```markdown
-# 🩺 Digital Kidney Twin (Clinical Edition)
+
+### 2. Train the AI Model (One-Time Setup)
+Run the training script to generate `kidney_risk_model.pkl`:
+```bash
+python "Improved Training script.py"
+```
+✅ Wait for confirmation:  
+> `"Model and artifacts saved to kidney_risk_model.pkl"`
+
+### 3. Launch the Dashboard# 🩺 Digital Kidney Twin (Clinical Edition)
 
 > **A Hybrid Intelligence System for CKD Risk Profiling**
 
@@ -39,16 +47,6 @@ This separation enables clinicians to see **both current status and future traje
 ### 1. Install Dependencies
 ```bash
 pip install streamlit pandas numpy scikit-learn Pillow
-```
-### 2. Train the AI Model (One-Time Setup)
-Run the training script to generate `kidney_risk_model.pkl`:
-```bash
-python "Improved Training script.py"
-```
-✅ Wait for confirmation:  
-> `"Model and artifacts saved to kidney_risk_model.pkl"`
-
-### 3. Launch the Dashboard
 ```bash
 streamlit run "Improved Dashboard Script.py"
 ```
