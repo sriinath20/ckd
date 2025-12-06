@@ -99,6 +99,5 @@ The app will open in your browser at `http://localhost:8501`.
 > - Trained on the [UCI Chronic Kidney Disease Dataset](https://archive.ics.uci.edu/ml/datasets/Chronic_Kidney_Disease).  
 > - eGFR calculations follow CKD-EPI 2021 but **must be validated by a licensed clinician**.  
 > - **Not a substitute for professional medical advice, diagnosis, or treatment.**
-
 ---
-```
+
