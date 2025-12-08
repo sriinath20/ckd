@@ -39,6 +39,7 @@ This separation enables clinicians to see **both current status and future traje
 ### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
+```
 ```bash
 streamlit run "app.py"
 ```
