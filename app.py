@@ -71,8 +71,14 @@ def predict_systemic_risk(artifacts, inputs):
         'bgr', 'bu', 'pot', 'wc', 'htn', 'dm', 'cad', 'pe', 'ane', 'hemo'
     ]
     
+    # Create DataFrame to ensure column order is correct
     input_df = pd.DataFrame([inputs], columns=feature_names)
-    imputed_vector = imputer.transform(input_df)
+    
+    # FIX: Convert to numpy array to avoid feature name mismatch errors in sklearn
+    # Some sklearn versions are strict about feature names if passed a DataFrame.
+    # Passing values ensures it treats it as a raw vector (safe since we ordered it above).
+    imputed_vector = imputer.transform(input_df.values)
+    
     prob = model.predict_proba(imputed_vector)[0][1]
     return prob
 
