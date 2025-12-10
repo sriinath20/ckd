@@ -2,14 +2,99 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import pickle
+import os
 from PIL import Image, ImageDraw
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import accuracy_score
 
 # ================================
-# DIGITAL KIDNEY TWIN v3.0
-# 3-Tab Dashboard Implementation
+# DIGITAL KIDNEY TWIN v3.1 (Self-Healing)
 # ================================
 
-# --- 1. MATHEMATICAL LAYER (eGFR & Scoring) ---
+# --- 1. TRAINING ENGINE (Self-Healing Logic) ---
+# We include the training logic here so the app can rebuild the model 
+# if the pickle file is from a different scikit-learn version.
+@st.cache_resource
+def train_and_save_model():
+    """Trains the model from scratch using current environment libraries."""
+    try:
+        # Load Data
+        if not os.path.exists('kidney_disease.csv'):
+            return None # Cannot train without data
+            
+        df = pd.read_csv('kidney_disease.csv')
+        
+        # Preprocessing (Mirroring train_revised.py)
+        if 'id' in df.columns: df = df.drop('id', axis=1)
+        
+        df['classification'] = df['classification'].astype(str).str.strip().str.lower().replace({'ckd\t': 'ckd'})
+        df['classification_numeric'] = df['classification'].map({'ckd': 1, 'notckd': 0, 'no': 0})
+        df['sc'] = pd.to_numeric(df['sc'], errors='coerce')
+        
+        # Target: Severe Risk (CKD + SC > 2.0)
+        df['severe_risk'] = ((df['classification_numeric'] == 1) & (df['sc'] > 2.0)).astype(int)
+        
+        # Cleaning features
+        def clean_col(df, col, mapping):
+            if col in df.columns:
+                df[col] = df[col].astype(str).str.strip().str.lower().replace(mapping)
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+            return df
+
+        df = clean_col(df, 'htn', {'yes': 1, 'no': 0})
+        df = clean_col(df, 'dm', {'yes': 1, 'no': 0, '\tyes': 1, ' yes': 1})
+        df = clean_col(df, 'cad', {'yes': 1, 'no': 0, '\tno': 0})
+        df = clean_col(df, 'pe', {'yes': 1, 'no': 0})
+        df = clean_col(df, 'ane', {'yes': 1, 'no': 0})
+        
+        # Other nominals
+        df = clean_col(df, 'rbc', {'abnormal': 1, 'normal': 0})
+        df = clean_col(df, 'pc', {'abnormal': 1, 'normal': 0})
+        df = clean_col(df, 'pcc', {'present': 1, 'notpresent': 0})
+        df = clean_col(df, 'ba', {'present': 1, 'notpresent': 0})
+        
+        # Numerics
+        num_cols = ['age', 'bp', 'bgr', 'bu', 'hemo', 'pot', 'wc', 'rc', 'al', 'su']
+        for col in num_cols:
+            if col in df.columns: df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        feature_cols = [
+            'age', 'bp', 'al', 'su', 'rbc', 'pc', 'pcc', 'ba',
+            'bgr', 'bu', 'pot', 'wc', 'htn', 'dm', 'cad', 'pe', 'ane', 'hemo'
+        ]
+        
+        # Filter valid columns
+        valid_cols = [c for c in feature_cols if c in df.columns]
+        X = df[valid_cols]
+        y = df['severe_risk']
+        
+        # Train
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+        imputer = SimpleImputer(strategy='median')
+        X_train_imputed = imputer.fit_transform(X_train)
+        
+        model = RandomForestClassifier(n_estimators=100, random_state=42, max_depth=10)
+        model.fit(X_train_imputed, y_train)
+        
+        artifacts = {
+            "model": model,
+            "imputer": imputer,
+            "features": valid_cols
+        }
+        
+        # Save to disk
+        with open('kidney_risk_model.pkl', 'wb') as f:
+            pickle.dump(artifacts, f)
+            
+        return artifacts
+        
+    except Exception as e:
+        st.error(f"Auto-Training Failed: {e}")
+        return None
+
+# --- 2. MATHEMATICAL LAYER (eGFR & Scoring) ---
 def calculate_egfr(creatinine, age, sex):
     """Calculates eGFR using CKD-EPI 2021 Equation."""
     if sex == "Male":
@@ -42,7 +127,7 @@ def get_health_score_and_color(egfr):
     else:
         return "Stage 5 / ESRD", 10, "#8B0000", "Kidney failure; critical" # Dark Red
 
-# --- 2. VISUALIZATION LAYER ---
+# --- 3. VISUALIZATION LAYER ---
 def create_kidney_image(color_hex):
     img = Image.new("RGBA", (200, 200), (255, 255, 255, 0))
     draw = ImageDraw.Draw(img)
@@ -53,26 +138,49 @@ def create_kidney_image(color_hex):
     draw.ellipse((30, 80, 70, 130), fill="white", outline=None) 
     return img
 
-# --- 3. ML LAYER (Systemic Risk) ---
+# --- 4. ML LAYER (Systemic Risk) ---
 def load_artifacts():
-    try:
-        with open('kidney_risk_model.pkl', 'rb') as f:
-            return pickle.load(f)
-    except FileNotFoundError:
-        return None
+    # Attempt to load existing model
+    artifacts = None
+    if os.path.exists('kidney_risk_model.pkl'):
+        try:
+            with open('kidney_risk_model.pkl', 'rb') as f:
+                artifacts = pickle.load(f)
+                # Test the artifacts to ensure version compatibility
+                # We try a dummy transform. If it fails (AttributeError), we force retrain.
+                dummy_input = np.zeros((1, len(artifacts['features'])))
+                artifacts['imputer'].transform(dummy_input)
+        except (AttributeError, ModuleNotFoundError, Exception) as e:
+            # print(f"Model incompatible or corrupt ({e}), retraining...")
+            artifacts = None # Force retrain
+
+    # If load failed or file missing, train now
+    if artifacts is None:
+        with st.spinner("Initializing AI Model (One-time setup)..."):
+            artifacts = train_and_save_model()
+            
+    return artifacts
 
 def predict_systemic_risk(artifacts, inputs):
     """Predicts probability of 'Severe Profile' using ML."""
     model = artifacts['model']
     imputer = artifacts['imputer']
+    features = artifacts['features']
     
+    # Create DataFrame to ensure column order is correct
+    # We construct a DF with 0s for missing features to be safe
+    input_df = pd.DataFrame(0, index=[0], columns=features)
+    
+    # Fill known values
     feature_names = [
         'age', 'bp', 'al', 'su', 'rbc', 'pc', 'pcc', 'ba',
         'bgr', 'bu', 'pot', 'wc', 'htn', 'dm', 'cad', 'pe', 'ane', 'hemo'
     ]
     
-    # Create DataFrame to ensure column order is correct
-    input_df = pd.DataFrame([inputs], columns=feature_names)
+    # Map input list to the DataFrame columns safely
+    for i, col in enumerate(feature_names):
+        if col in input_df.columns:
+            input_df[col] = inputs[i]
     
     # FIX: Convert to numpy array to avoid feature name mismatch errors in sklearn
     # Some sklearn versions are strict about feature names if passed a DataFrame.
@@ -89,7 +197,7 @@ def main():
 
     artifacts = load_artifacts()
     if not artifacts:
-        st.error("⚠️ Model file not found. Please run `python train_revised.py` first.")
+        st.error("⚠️ Model could not be loaded or trained. Please ensure 'kidney_disease.csv' is in the directory.")
         return
 
     # Initialize Session State for Inputs if not present
@@ -216,8 +324,8 @@ def main():
         sim_stage, sim_score, sim_color, sim_meaning = get_health_score_and_color(sim_egfr)
         
         # Sim ML Risk
-        sim_features = features.copy()
-        sim_features[1] = sim_bp # Update BP in feature vector
+        sim_features = list(features).copy()
+        sim_features[1] = sim_bp # Update BP in feature vector (Index 1)
         sim_risk_prob = predict_systemic_risk(artifacts, sim_features)
         
         st.markdown("---")
